@@ -1,0 +1,97 @@
+/** This class draws the welcome page and goodbye page on the screen.
+    Mostly just some functions to pring strings and poke screen memories. */
+
+class WelcomePage{
+
+  /* this function is to be called by main function to organise the drawing. */
+  function void welcomePage(){
+    do ImageSetUp.blocksSetUp();
+    do drawFlappyWord.drawFlappyWord(120, 70);
+    do drawBirdWord.drawBirdWord(260, 70);
+    do ImageSetUp.drawBirdEffect();
+    do Sys.wait(200);
+    do WelcomePage.writeInstructions();
+    return;
+    }
+
+  function void holdWelcome(){
+  return;
+  }
+
+
+  function void writeInstructions(){
+    var String welcome, introA, introB, introC, begin;
+    let welcome = " Welcome!";
+    let introA = "*Press 'Space' or 'Up Arrow' to flap the bird up.";
+    let introB = "*Keep it from crashing, and try to score 120+ to check";
+    let introC = " out all the BONUS TREATS!";
+    let begin = "Now, press 'Space' or 'Up Arrow' to BEGIN!";
+
+    do Output.moveCursor(11, 7);
+    do Output.printString(welcome);
+    do Output.moveCursor(12, 7);
+    do Output.printString(introA);
+    do Output.moveCursor(13, 7);
+    do Output.printString(introB);
+    do Output.moveCursor(14, 7);
+    do Output.printString(introC);
+    do Output.moveCursor(16, 7);
+    do Sys.wait(300);
+    do Output.printString(begin);
+    do welcome.dispose();
+    do introA.dispose();
+    do introB.dispose();
+    do introC.dispose();
+    do begin.dispose();
+  return;
+  }
+
+    /* Function called by the main function that organises Goodbye when
+      user presses "q". */
+  function void goodbye()
+  {
+  var String bye1, bye2;
+  let bye1 = "Thank you for playing!";
+  let bye2 = "Goodbye!";
+  do Screen.clearScreen();
+
+  do Output.moveCursor(10,15);
+  do Output.printString(bye1);
+  do Output.moveCursor(11,19);
+  do Output.printString(bye2);
+  do bye1.dispose();
+  do bye2.dispose();
+  do Sys.wait(200);
+
+  // Animation of bird flying away:
+  do DrawBird32bit.draw32bit(320, 100);
+  do Sys.wait(150);
+  do Screen.setColor(false);
+  do Screen.drawRectangle(305, 100, 332, 132);
+  do DrawBird32bit.draw32bit(350, 100);
+  do Sys.wait(100);
+
+  do Screen.setColor(false);
+  do Screen.drawRectangle(330, 100, 382, 132);
+  do DrawBird32bit.draw32bit(400, 100);
+  do Sys.wait(200);
+  do Screen.setColor(false);
+  do Screen.drawRectangle(380, 100, 432, 132);
+
+  do DrawBird32bit.draw32bit(450, 100);
+  do Sys.wait(200);
+  do Screen.setColor(false);
+  do Screen.drawRectangle(430, 100, 482, 132);
+
+  do DrawBird32bit.draw32bit(480, 100);
+  do Sys.wait(200);
+  do Screen.setColor(false);
+  do Screen.drawRectangle(460, 100, 511, 132);
+
+  do Sys.wait(500);
+
+  return;
+  }
+
+
+}

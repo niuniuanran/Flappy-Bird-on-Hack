@@ -1,0 +1,143 @@
+/** This class draws the bird at given position.
+xPos, yPos marks the left top pixel. */
+
+class DrawBird32bit{
+
+/* draw a bird that's alive. */
+function void draw32bit(int xPos, int yPos){
+// each function draws one quarter of the bird
+  do DrawBird32bit.draw1(xPos,yPos);
+  do DrawBird32bit.draw2(xPos,yPos);
+  do DrawBird32bit.draw3(xPos,yPos);
+  do DrawBird32bit.draw4(xPos,yPos);
+  return;
+}
+
+/* draw a bird that's dead. */
+function void draw32bitDead(int xPos, int yPos){
+  do DrawBird32bit.draw1(xPos,yPos);
+  do DrawBird32bit.draw2dead(xPos,yPos);
+  do DrawBird32bit.draw3(xPos,yPos);
+  do DrawBird32bit.draw4(xPos,yPos);
+  return;
+}
+
+/* left top part*/
+function void draw1(int xPos, int yPos) {
+  var int location, memAddress;
+  let location = (xPos/16) + (yPos * 32) ;
+	let memAddress = 16384+location;
+	do Memory.poke(memAddress+0, 0);
+	do Memory.poke(memAddress+32, -8192);
+	do Memory.poke(memAddress+64, -512);
+	do Memory.poke(memAddress+96, 7680);
+	do Memory.poke(memAddress+128, 896);
+	do Memory.poke(memAddress+160, 896);
+	do Memory.poke(memAddress+192, 448);
+	do Memory.poke(memAddress+224, 480);
+	do Memory.poke(memAddress+256, 224);
+	do Memory.poke(memAddress+288, 2044);
+	do Memory.poke(memAddress+320, 16383);
+	do Memory.poke(memAddress+352, 15887);
+	do Memory.poke(memAddress+384, 24579);
+	do Memory.poke(memAddress+416, 24579);
+	do Memory.poke(memAddress+448, 24579);
+	do Memory.poke(memAddress+480, 24579);
+	return;
+}
+/* right top part */
+function void draw2(int xPos, int yPos) {
+  var int location, memAddress;
+  let location = (xPos/16 + 1) + (yPos * 32) ;
+	let memAddress = 16384+location;
+	do Memory.poke(memAddress+0, 0);
+	do Memory.poke(memAddress+32, 63);
+	do Memory.poke(memAddress+64, 127);
+	do Memory.poke(memAddress+96, 248);
+	do Memory.poke(memAddress+128, 2044);
+	do Memory.poke(memAddress+160, 1548);
+	do Memory.poke(memAddress+192, 3084);
+	do Memory.poke(memAddress+224, 3078);
+	do Memory.poke(memAddress+256, 6918);
+	do Memory.poke(memAddress+288, 6918);
+	do Memory.poke(memAddress+320, 6918);
+	do Memory.poke(memAddress+352, 6918);
+	do Memory.poke(memAddress+384, 6150);
+	do Memory.poke(memAddress+416, 6158);
+	do Memory.poke(memAddress+448, 8188);
+	do Memory.poke(memAddress+480, 32752);
+	return;
+}
+
+/* right top part, with a dead eye */
+function void draw2dead(int xPos, int yPos) {
+  var int location, memAddress;
+  let location = (xPos/16 + 1) + (yPos * 32) ;
+	let memAddress = 16384+location;
+  do Memory.poke(memAddress+0, 0);
+do Memory.poke(memAddress+32, 63);
+do Memory.poke(memAddress+64, 127);
+do Memory.poke(memAddress+96, 248);
+do Memory.poke(memAddress+128, 2044);
+do Memory.poke(memAddress+160, 1548);
+do Memory.poke(memAddress+192, 3084);
+do Memory.poke(memAddress+224, 3614);
+do Memory.poke(memAddress+256, 7990);
+do Memory.poke(memAddress+288, 6630);
+do Memory.poke(memAddress+320, 6342);
+do Memory.poke(memAddress+352, 6630);
+do Memory.poke(memAddress+384, 6966);
+do Memory.poke(memAddress+416, 7710);
+do Memory.poke(memAddress+448, 8188);
+do Memory.poke(memAddress+480, 32752);
+	return;
+}
+
+/* left bottom part */
+function void draw3(int xPos, int yPos) {
+  var int location, memAddress;
+  let location = (xPos/16) + ((yPos+16) * 32) ;
+  let memAddress = 16384+location;
+	do Memory.poke(memAddress+0, 12291);
+	do Memory.poke(memAddress+32, 12294);
+	do Memory.poke(memAddress+64, 14342);
+	do Memory.poke(memAddress+96, 7950);
+	do Memory.poke(memAddress+128, 2044);
+	do Memory.poke(memAddress+160, 248);
+	do Memory.poke(memAddress+192, 96);
+	do Memory.poke(memAddress+224, 96);
+	do Memory.poke(memAddress+256, 96);
+	do Memory.poke(memAddress+288, 192);
+	do Memory.poke(memAddress+320, 192);
+	do Memory.poke(memAddress+352, 1920);
+	do Memory.poke(memAddress+384, 16128);
+	do Memory.poke(memAddress+416, -2048);
+	do Memory.poke(memAddress+448, -16384);
+	do Memory.poke(memAddress+480, 0);
+	return;
+}
+
+/* right bottom part */
+function void draw4(int xPos, int yPos) {
+  var int location, memAddress;
+  let location = (xPos/16 + 1) + ((yPos+16) * 32) ;
+	let memAddress = 16384+location;
+	do Memory.poke(memAddress+0, -8144);
+	do Memory.poke(memAddress+32, -16336);
+	do Memory.poke(memAddress+64, -40);
+	do Memory.poke(memAddress+96, 24600);
+	do Memory.poke(memAddress+128, 24624);
+	do Memory.poke(memAddress+160, 32752);
+	do Memory.poke(memAddress+192, 16320);
+	do Memory.poke(memAddress+224, 3072);
+	do Memory.poke(memAddress+256, 3072);
+	do Memory.poke(memAddress+288, 1536);
+	do Memory.poke(memAddress+320, 1536);
+	do Memory.poke(memAddress+352, 1984);
+	do Memory.poke(memAddress+384, 504);
+	do Memory.poke(memAddress+416, 63);
+	do Memory.poke(memAddress+448, 7);
+	do Memory.poke(memAddress+480, 0);
+	return;
+}
+}

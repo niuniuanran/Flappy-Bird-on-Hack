@@ -1,0 +1,119 @@
+/**
+    This class contains methods that calculate the bird's movement,
+    and decide whether the bird is alive,
+    and draw the bird according to its current state.
+*/
+
+class BirdFlappy {
+
+  field int xPos, yPos, downSpeed, downAcc, upSpeed, alive;
+
+  /* Create a new bird. */
+  constructor BirdFlappy new(){
+    let xPos = 224;     // 256-32, the bird starts at the centre x position.
+    let yPos = 96;      // 128-32, the bird starts at the centre y position.
+    let upSpeed = 20;   // when the key is pressed, it flies up with uniform speed.
+    let downSpeed = 0;  // when not flying, it starts to fall from 0 speed.
+    let downAcc = 10;   // gravity acceleration
+    let alive = 1;      // when dead, this value turns to 0.
+    return this;
+  }
+
+  /* Dispose the bird after it is dead in the game. */
+  method void dispose(){
+    do Memory.deAlloc(this);
+    return;
+  }
+
+ /* Returns 1 if the bird is alive, 0 if dead. */
+  method int isAlive(){
+    return alive;
+  }
+
+/* change the bird from alive to dead */
+  method void killBird(){
+    let alive = 0;
+    return;
+  }
+
+/* Outside functions will use this method to access yPos */
+  method int getyPos() {
+    return yPos;
+  }
+
+ /* Draw the bird at current position. */
+  method void drawBird(){
+      if (yPos > 223){
+        let yPos = 223;
+      }
+      if (yPos < 1){
+        let yPos = 1;
+      }
+        do DrawBird32bit.draw32bit(xPos, yPos);
+    return;
+  }
+
+/* Draw a white square to erase the old bird. */
+  method void clearBird(){
+    do Screen.setColor(false);
+    do Screen.drawRectangle(xPos, yPos, xPos+32, yPos+32);
+    return;
+  }
+
+/* Draw a dead bird and cover the alive bird with it. */
+  method void drawDeadBird(){
+    do Screen.setColor(false);
+    if (yPos > 223){
+      let yPos = 223;
+    }
+    if (yPos < 1){
+      let yPos = 1;
+    }  // if the bird crashes on edge of screen, set its position so that it
+       // can be shown fully.
+    do Screen.drawRectangle(xPos, yPos, xPos+32, yPos+32);
+    do DrawBird32bit.draw32bitDead(xPos,yPos);
+    return;
+  }
+
+
+/* Calculate the next position of the bird, if it's flying up. */
+  method void posFlyUp(){
+    let downSpeed = 0;
+    // This is to get the downSpeed ready for next free fall.
+    let yPos = yPos - upSpeed;
+    return;
+  }
+
+/* Calculate the next position of the bird, if it's dropping.  */
+  method void posDropDown(){
+    let downSpeed = downSpeed + downAcc; // free fall, down speed increases
+    let yPos = yPos + downSpeed;
+    return;
+  }
+
+/* Organise the movement according to key pressed. */
+  method void birdFlap(){
+    do clearBird();     // erase the old bird first.
+
+    if ((Keyboard.keyPressed() = 32) | (Keyboard.keyPressed()=131)){
+      do posFlyUp();
+    }
+    else {
+      do posDropDown();
+    }         // If space or up arrow is pressed, fly up. Otherwise, free fall.
+    return;
+    }
+
+/* Draw the bird based on its state. */
+  method void birdFlapDraw(){
+    if (alive = 1){
+      do drawBird();
+      return;
+    }
+    else{
+      do drawDeadBird();
+      return;
+    }
+  }
+
+}

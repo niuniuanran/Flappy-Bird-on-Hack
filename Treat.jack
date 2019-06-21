@@ -1,0 +1,191 @@
+/** This class adds a special treat to the game.
+There will be a star/snowflake/moneyback/mushroom coming from the left of the screen.
+If the treat is eaten by the bird, A TREAT IS ON!
+*/
+
+  class Treat{
+
+    field int treatComing, treatXpos, treatYpos, treatOn, treatTimer;
+
+    constructor Treat new(){
+        let treatComing = 0;
+            // if treatComing is 1-4, there will be a treat mark coming from
+            // left edge of screen towards the bird.
+        let treatOn = 0;
+            // if treatOn is 2 or 4, a treat is currently on.
+            // treat 1 and treat 3 does not need this, as the award is one-off.
+        let treatTimer = 0;
+            // if treatOn is 2 or 4, the timer will start ticking,
+            // and the treat will be finished when it reaches 15.
+        let treatXpos = 480;
+            // this is where the treat starts moving in.
+        let treatYpos = 112;
+            // Ypos is fixed just to make it easier to be treated
+            // (and easier to organise the position against the map)
+        return this;
+        }
+
+
+    method void dispose(){
+      do Memory.deAlloc(this);
+      return;
+      }
+
+    method int treatOn(){
+      return treatOn;
+    }
+
+        /* returns the Ypos of the treat for the PlayGame class to test if the
+        bird gets it. */
+    method int treatYpos(){
+      return treatYpos;
+    }
+
+
+        /* returns whether there is a star coming/ */
+    method int treatComing(){
+      return treatComing;
+      }
+
+    method void startComing(int treatNum){
+      let treatComing = treatNum;
+      let treatXpos = 480;
+      return;
+    }
+
+    method void treatAdvance(){
+      if (treatComing = 0){return;}
+      if (treatXpos < 30)
+      {
+        do clearTreat();
+        let treatComing = 0;
+        let treatXpos = 480;
+        return;
+      }
+      else{
+      do clearTreat();
+      let treatXpos = treatXpos - 32;
+      do DrawTreat.drawTreat(treatComing, treatXpos, treatYpos);
+      }
+      return;
+    }
+
+          /* the bird has eaten the treat */
+    method void treatGot(){
+        do clearTreat();
+        let treatOn = treatComing;
+        let treatComing = 0;
+        let treatXpos = 480;
+        if ((treatOn=2)|(treatOn=4)) {do treatMarkOn(); }
+
+        return;
+        }
+
+
+      /* Erases the treat mark from the screen. */
+    method void clearTreat()
+    {
+       do Screen.setColor(false);
+       do Screen.drawRectangle(treatXpos, treatYpos, treatXpos+31, treatYpos+32);
+       return;
+    }
+
+        /* returns 1 when the treat is within bird's reach.
+            The bird's xPos is 224 to 256. */
+    method int treatAtBird()
+      {
+          if ((treatXpos < 256) & (treatXpos > (224-32)) ){return 1;}
+          else{return 0;}
+      }
+
+      /* This is also applicable to treat 2 and 4 which are not one-off*/
+    method void treatDone(){
+            let treatOn = 0;
+            let treatTimer = 0;
+            return;
+        }
+
+
+      method void writeExplain(){
+        var String explanation;
+            if (treatComing = 3){
+                 do Output.moveCursor(11,10);
+              let explanation = "Score Doubled!";
+            }
+            if (treatComing = 2){
+                do Output.moveCursor(11,6);
+              let explanation = "Bird Slows Down!";
+            }
+            if (treatComing = 4){
+              do Output.moveCursor(11,5);
+              let explanation = "You're protected!";
+            }
+            if (treatComing = 1){
+              do Output.moveCursor(11,16);
+              let explanation = "Easy map!";
+            }
+        do Output.printString(explanation);
+        do explanation.dispose();
+        return;
+      }
+
+      method void clearExplain()
+      {
+        var String whiteline;
+        if (treatOn/2*2 = treatOn){
+            let whiteline = "                 ";
+            do Output.moveCursor(11,5);
+            do Output.printString(whiteline);}
+        else{
+            let whiteline = "               ";
+            do Output.moveCursor(11,10);
+            do Output.printString(whiteline);}
+
+        do whiteline.dispose();
+        return;
+      }
+
+    method void timerTick(){
+
+            if (treatOn =0 ){return;}
+            let treatTimer = treatTimer + 1;
+            if (treatTimer > 30) {
+                  do treatDone();
+                  return;
+            }
+            if (treatTimer > 24){
+                  if (treatTimer = 25){do treatMarkOff();return;}
+                  if (treatTimer = 26){do treatMarkOn();return;}
+                  if (treatTimer = 27){do treatMarkOff();return;}
+                  if (treatTimer = 29){do treatMarkOn();return;}
+                  if (treatTimer = 30){do treatMarkOff();return;}
+                   }
+
+            if (treatTimer > 1){
+                  do clearExplain();
+                  if ((treatOn = 1)|(treatOn = 3)) {do treatDone(); return;}
+            }
+
+              return;
+            }
+    method void treatMarkOn(){
+            do DrawTreat.drawTreat(treatOn+160, 192,118);
+            return;
+              }
+    method void treatMarkOff(){
+            do Screen.setColor(false);
+            do Screen.drawRectangle(192,118, 208, 134);
+            return;
+            }
+    method void treatMarkBlink(){
+            do treatMarkOff();
+            do treatMarkOn();
+            do treatMarkOff();
+            do treatMarkOn();
+            return;
+            }
+
+
+
+
+  }//end of file

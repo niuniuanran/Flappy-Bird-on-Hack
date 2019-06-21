@@ -1,0 +1,206 @@
+/** This is the central class of the project that organises the game play.
+the playGame function will construct a bird, a map, and a special treat object.
+It will call the birdFlap function every 0.1 second to move the bird to a new
+position, and see if the bird is still alive.
+It will manipulate the state of the special treat object so that there will be
+different treats coming in for the bird to eat and creates different effect.
+It will also calculate the score and put it on left top corner of screen. */
+
+class PlayGame{
+
+    /* central function that organises the game. */
+  function void playGame(){
+
+      var BirdFlappy myBird;
+      var Map myMap;
+      var Treat myTreat;
+
+      var int score;
+      var int flappyTimer;
+            // counts the time the bird has flapped for score and map update.
+
+
+    let myBird = BirdFlappy.new();
+    let myMap = Map.new();
+    let myTreat = Treat.new();
+    let flappyTimer = 0;
+    let score = 0;
+            // initialise the states.
+
+    do myMap.drawBlocks();
+    do myBird.drawBird();
+            // Draw the bird and draw the map.
+
+
+    /* Here's the game play loop! */
+    while (myBird.isAlive()=1)
+    {
+      if (myTreat.treatOn()=2) {do Sys.wait(100);}
+              // when we are on treat No.2, the game slows down.
+      do Sys.wait(100);
+      let flappyTimer = flappyTimer + 1;
+      do myBird.birdFlap();
+                // calculates the birds' position according to keyboard movement
+      if (~(myTreat.treatOn()=4)){do PlayGame.testAlive(myMap.getBirdBlock(), myBird);}
+                // test if the bird is still alive and update alive state
+      do myBird.birdFlapDraw();
+                // draw the alive/dead bird according to the result
+                //  we got from last two steps
+
+      if ((flappyTimer = 4)|(flappyTimer = 9))
+      {
+            do myMap.mapAdvance();
+            do PlayGame.scoreSetup();
+            do PlayGame.scoreTick(score);
+                //  every five flaps, move the map,
+                //  and write the score on top of blocks.
+
+            // when a limited-time treat (2 or 4) is on, the timer will tick.
+            do myTreat.treatAdvance();
+            do myTreat.timerTick();
+                // if treatComing is 0, this function does nothing.
+                // if treatComing is 1-4, this function moves the
+                //   treat mark at the same speed with the map.
+
+            if (PlayGame.testTreat(myTreat.treatComing(), myTreat.treatAtBird(), myTreat.treatYpos(), myBird.getyPos())= 1)
+              {
+
+                  do myTreat.writeExplain();
+                        // write down an explanation of what treat you got
+                  if (myTreat.treatComing() = 1){
+                      do myMap.clearBlocks();
+                      do myMap.goto6();
+                      do myMap.reloadMap();}
+                if (myTreat.treatComing() = 3){
+                    let score = score * 2;
+                }
+
+                  do myTreat.treatGot();
+              }
+        }
+
+      if (flappyTimer = 9){
+                let flappyTimer = 0;
+                let score = score + 1;
+                    //  every 10 flaps, score + 1.
+                if (score - (score/131*131)=11) {do myTreat.startComing(1); }
+                if (score - (score/131*131)=90){do myTreat.startComing(2); }
+                if (score - (score/131*131)=33) {do myTreat.startComing(3); }
+                if (score - (score/131*131)=120){do myTreat.startComing(4); }
+
+                   // there will be a treat coming around every 30-40 score.
+              }
+
+              } // end of while alive = 1 loop
+
+
+    if (myBird.isAlive() = 0){
+              do myMap.dispose();
+              do myBird.dispose();
+              do myTreat.dispose();
+              // if my bird is dead, show the deadPage
+              // and ask if player wants to start again or exit.
+
+                do PlayGame.drawDeadPage();
+                return;
+              }
+              do myMap.dispose();
+              do myBird.dispose();
+              do myTreat.dispose();
+              return;
+            }
+
+  /* Test if the bird is currently at a valid position and still alive. */
+    function void testAlive(int block, BirdFlappy myBird){
+      var int y;
+
+      if ((myBird.getyPos() < 1) | (myBird.getyPos() > 223)){
+                              // crashes the top or bottom of the screen
+         do myBird.killBird();
+         return;
+      }
+
+      if (block < 5) {
+        let y = block * 20;
+        if (myBird.getyPos() < y){        // crashes block on top
+          do myBird.killBird();
+          return;
+        }
+      }
+      else {
+        let y = 255 - ((9 - block) * 20);       // crashes block on bottom
+        if ((myBird.getyPos() + 32)>y){
+          do myBird.killBird();
+          return;
+        }
+      }
+      return;
+    }
+
+
+
+    function void holdDeadPage(){
+                        // just a place holder before user presses any key
+    return;
+    }
+
+    function void scoreSetup(){
+                            // write "SCORE" on top of any map items.
+      var String yourScore;
+      let yourScore = "SCORE:";
+      do Output.moveCursor(2, 1);
+      do Output.printString(yourScore);
+      do yourScore.dispose();
+      return;
+    }
+
+    function void scoreTick(int score){
+                            // write number of score.
+      do Output.moveCursor(2, 8);
+      do Output.printInt(score);
+      return;
+    }
+
+    function int testTreat(int treatComing, int treatAtBird, int treatYpos, int birdYpos)
+    {
+                          // test if there is a treat, and if the bird gets it.
+          if (treatComing=0){
+            return 0;
+            }
+          if (treatAtBird = 0){
+            return 0;
+          }
+          if ((treatYpos < (birdYpos+36)) & ((treatYpos + 36)>  birdYpos))
+                {
+                return 1;
+                }
+          return 0;
+    }
+
+    function void drawDeadPage(){             // this page shows when bird dies.
+      var String instrA;
+      var String instrB;
+      var String instrC;
+
+      let instrA = "Ooops!";
+      let instrB = "Press 'Space' or 'Up Arrow' to start again";
+      let instrC = "Press 'q' to exit game";
+      do Screen.setColor(false);
+      do Screen.drawRectangle(0,70,511,186);
+      do Output.moveCursor(10, 10);
+      do Output.printString(instrA);
+      do Output.moveCursor(11, 10);
+      do Output.printString(instrB);
+      do Output.moveCursor(12, 10);
+      do Output.printString(instrC);
+      do instrA.dispose();
+      do instrB.dispose();
+      do instrC.dispose();
+      do Sys.wait(300);
+      return;
+    }
+
+
+
+
+    }    // end of file

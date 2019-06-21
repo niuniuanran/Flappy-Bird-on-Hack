@@ -1,0 +1,187 @@
+/** This class creates obstacles for the bird and gets the blocks moving left
+at a uniform speed. */
+
+class Map {
+
+  field String mapString;
+  field int start, end, mapCounter;
+  field int birdBlock;
+
+  /* A new map is constructed when a new game begins. */
+  constructor Map new(){
+        // The mapString is a string of number 0-9
+        // that will be translated into blocks.
+    let start = 0;
+    let end = 15;
+        // start and end marks which part of the mapString is being displayed
+        // on screen.
+    let mapCounter = 0;
+        // this number is used by updateMap method to choose the next mapString.
+    let mapString = "66666666677777722222222111111117777779999999991111112225555551111155555550000009999999992222444444440000000000444444333333333222222225555522222222999991188888888888888555555599999993333333322222222222";
+        // this is our first mapString.
+
+        // each number in mapString presents one unit of block, width = 32
+        // number i = 0-4 means the block grows from the top, height = i
+        // number i = 5-9 means the block grows from the bottom, height = 9 - i
+        // 0 and 9 are the easiest, 4 and 5 are the hardest.
+
+    let birdBlock = mapString.charAt(start+7) - 48;
+      // current block that might kill the bird
+    return this;
+    }
+
+    /* Dispose the map object, including the object itself and the mapString */
+  method void dispose(){
+    do mapString.dispose();
+    do Memory.deAlloc(this);
+    return ;
+  }
+
+      /* reload a mapString from the beginning. */
+    method void reloadMap(){
+      let start = 0;
+      let end = 15;
+      return;
+    }
+
+      /* mapString 6 is a special treat. This method goes to the treat when
+       the bird eats a star. */
+    method void goto6(){
+      do clearBlocks();
+      let mapCounter = 6;
+      do updateMap();
+      return;
+    }
+
+    /* return the current block that might kill the bird for the PlayGame module
+        to test if the bird is still alive. */
+    method int getBirdBlock(){
+      return birdBlock;
+    }
+
+    /* Given a block's shape (represented by int block) and
+      its position on the screen
+      ( int i means it is the i-th one among the 16 blocks),
+      draw a block. */
+   method void drawOneBlock(int i, int block){
+      var int x1, y1, x2, y2;
+      let x1 = i * 32;
+      let x2 = (i+1) * 32 - 1;
+      if (block < 5) {
+        let y1 = 0;
+        let y2 = block * 20;
+      }
+      else {
+        let y2 = 255;
+        let y1 = 255 - ((9 - block) * 20);
+      }
+      do Screen.setColor(true);
+      do Screen.drawRectangle(x1,y1,x2,y2);
+      return;
+  }
+
+   /* Given the same information like drawOneBlock, draw a white rectangle to
+   cover it. */
+    method void clearOneBlock(int i, int block){
+        var int x1, y1, x2, y2;
+        let x1 = i * 32;
+        let x2 = (i+1) * 32 - 1;
+        if (block < 5) {
+          let y1 = 0;
+          let y2 = block * 20;
+        }
+        else {
+          let y2 = 255;
+          let y1 = 255 - ((9 - block) * 20);
+        }
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x1,y1,x2,y2);
+        return;
+    }
+
+      /* Draw the blocks represented by the 16 numbers from mapString[start]
+      to mapString[end] */
+    method void drawBlocks(){
+      var int i;
+      let i = 0;
+      while (i < 16) {
+        do drawOneBlock(i, (mapString.charAt(start + i)-48));
+        let i = i + 1;
+      }
+      return;
+    }
+
+      /* Clear the blocks represented by the 16 numbers from mapString[start]
+      to mapString[end], which means clear the whole current map. */
+    method void clearBlocks(){
+      var int i;
+      let i = 0;
+      while (i < 16) {
+        do clearOneBlock(i, (mapString.charAt(start + i)-48));
+        let i = i + 1;
+      }
+      return;
+    }
+
+      /* Advance the blocks, including clearing the blocks drawn last step
+      adding 1 to the start and end,
+      load a new mapString if old one is finished,
+      and drawing the blocks according to the new start and end.*/
+    method void mapAdvance(){
+      do clearBlocks();
+      if (end < 199){
+        let start = start + 1;
+        let end = end + 1;
+      }
+      else{
+        let mapCounter = mapCounter + 1;
+        let mapCounter = mapCounter - (mapCounter/5 * 5);
+          // Normally the map will switch among map 0, 1, 2, 3, 4
+          // map 6 will not be used unless the special star treat is activated.
+
+        do updateMap();
+        do reloadMap();
+      }
+      let birdBlock = mapString.charAt(start+7) - 48;
+          // the block threatening the bird has changed too.
+      do drawBlocks();
+      return;
+    }
+
+
+
+
+    /* Dispose the old mapString and load the new mapString.  */
+  method void updateMap(){
+    do mapString.dispose();
+      // dispose the old mapString.
+
+    if (mapCounter = 0) {
+    let mapString =  "88888888666777777733336666611111111777777777222225555555555222222000444444444888888888899999999994444777777888888888666666600000444444442228885588888888999999999111111111199000000000044444455555559999";
+    }
+
+    if (mapCounter = 1) {
+    let mapString =  "99999444449999999992222222299999999555555555566666677555511111155555511111199992221112226666666666660000008888888999994444444444111111114444444448888899999999998888444444400000000002224444444444422222";
+    }
+
+    if (mapCounter = 2) {
+    let mapString =  "00000000033333311111111000000555555555000004488866888811111111111144444444000444499944444444444444411111133333333311111111119999999993335555444444444466555555555500000000555555500000000001111111111111";
+    }
+
+    if (mapCounter = 3) {
+    let mapString =  "11111111122222288888882222225566633333888888888555550000888888222222222255522222222222222277777788888833399999944422222222669999999977777882222222555559999999333333333000000000000000666666666331111111";
+    }
+
+    if (mapCounter = 4) {
+    let mapString = "66699888888886666888888888877777555555558888899999991111166666888866666449999977777777722222222221111222222222555556666666222222229993333222226666666666555588888888888888555554444444447777777777111777";
+    }
+    if (mapCounter = 6){
+    let mapString = "18181818181818181818181818181818181811188811118888002222222277777772222221111100044444444777799999995555555555500000000444444442222222222222229999999222211111555555577777111111111111115557777733333226";
+    }
+    // mapString 6 starts with a special treat when the bird eats a star.
+    return;
+    }
+
+
+
+}

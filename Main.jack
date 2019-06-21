@@ -1,0 +1,43 @@
+/** This is the main class for the Flappy Bird Basic project. */
+
+class Main{
+  function void main()
+  {
+
+  // Print the welcome page upon running.
+    do WelcomePage.welcomePage();
+
+ // Wait for the user to press "space" or "up arrow" to start the game.
+ // if these two keys are not pressed, just hold the page and do nothing.
+    while (~((Keyboard.keyPressed()=131)|(Keyboard.keyPressed()=32)))
+    {
+        do WelcomePage.holdWelcome();
+        }
+
+// Once we exit the welcome page, we are not going back there.
+// Clear the screen and play the game.
+// the playGame function will return when the bird is dead.
+    do Screen.clearScreen();
+    do PlayGame.playGame();
+
+// if we reach here, the first bird would have died.
+// Hold the dead page until the user choose to exit, or go on playing.
+    while (~((Keyboard.keyPressed()=113)|(Keyboard.keyPressed()=81)))
+    {
+    do PlayGame.holdDeadPage();
+    if ((Keyboard.keyPressed()=131)|(Keyboard.keyPressed()=32))
+    {
+    do Screen.clearScreen();
+    do PlayGame.playGame();
+    }
+    }
+
+// If the user presses "q" to exit the game, show the goodbye animation,
+// and finish this programme.
+// This class only calls functions and doesn't construct objects, so no dispose
+// jobs needed at the end.
+    do WelcomePage.goodbye();
+    return;
+
+}
+}
